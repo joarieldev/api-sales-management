@@ -1,13 +1,18 @@
-import express from 'express'
-import morgan from 'morgan'
-import cors from 'cors'
+import 'reflect-metadata'
+import app from './app'
+import { AppDataSource } from './db'
+import { PORT, HOST } from './config'
 
-const app = express()
-const port = 3000
+async function main() {
+  try {
+    await AppDataSource.initialize()
+    console.log('Database Connected...')
+    app.listen(PORT, () =>
+      console.log(`Server running on http://${HOST}:${PORT}`)
+    )
+  } catch (error) {
+    console.log(error)
+  }
+}
 
-app.use(morgan('dev'))
-app.use(cors())
-
-app.listen(port, () =>
-  console.log(`Server running on http://localhost:${port}`)
-)
+main()
