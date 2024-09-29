@@ -15,7 +15,7 @@ import { Detail } from './entities/Detail'
 export const AppDataSource = new DataSource({
   type: 'mysql',
   host: DB_HOST,
-  port: DB_PORT,
+  port: parseInt(DB_PORT??'0'),
   username: DB_USERNAME,
   password: DB_PASSWORD,
   database: DB_DATABASE,
