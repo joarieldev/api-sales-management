@@ -6,6 +6,11 @@ import {
   DB_PASSWORD,
   DB_DATABASE,
 } from './config'
+import { Employee } from './entities/Employee'
+import { Customer } from './entities/Customer'
+import { Product } from './entities/Product'
+import { Sales } from './entities/Sales'
+import { Detail } from './entities/Detail'
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -15,4 +20,5 @@ export const AppDataSource = new DataSource({
   password: DB_PASSWORD,
   database: DB_DATABASE,
   synchronize: true,
+  entities: [Employee, Customer, Product, Sales, Detail],
 })
