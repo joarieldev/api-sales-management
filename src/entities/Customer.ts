@@ -14,8 +14,8 @@ export class Customer extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'varchar', length: 20, unique: true, nullable: false })
-  dni: string
+  @Column({ type: 'int', unique: true, nullable: false })
+  dni: number
 
   @Column({ type: 'varchar', length: 50, nullable: false })
   firstName: string

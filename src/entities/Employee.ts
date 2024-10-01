@@ -18,7 +18,7 @@ export class Employee extends BaseEntity {
   @Column({ type: 'varchar', length: 100, nullable: false })
   password: string
 
-  @Column({ type: 'enum', enum: ['admin', 'employee'], default: 'employee' })
+  @Column({ type: 'enum', enum: ['employee'], default: 'employee' })
   role: string
 
   @Column({ type: 'varchar', length: 50, nullable: false })

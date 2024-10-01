@@ -17,13 +17,13 @@ export class Product extends BaseEntity {
   @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
   name: string
 
-  @Column({ type: 'varchar', length: 250, nullable: true })
+  @Column({ type: 'varchar', length: 250, nullable: true, default: "" })
   description: string
 
   @Column({ type: 'float', nullable: false })
   price: number
 
-  @Column({ type: 'int', width: 200, nullable: false })
+  @Column({ type: 'int', nullable: false })
   stock: number
 
   @OneToMany(()=>Detail, (detail)=>detail.product)

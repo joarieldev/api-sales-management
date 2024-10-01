@@ -10,7 +10,7 @@ services:
     volumes:
       - './mysql_data:/var/lib/mysql'
     environment:
-      MYSQL_ROOT_PASSWORD: mysql
-      MYSQL_DATABASE: sales-management-db
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
     ports:
       - '3307:3306'
