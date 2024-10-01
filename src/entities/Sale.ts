@@ -11,17 +11,17 @@ import { Detail } from './Detail'
 import { Customer } from './Customer'
 
 @Entity()
-export class Sales extends BaseEntity {
+export class Sale extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
   @Column({ type: 'float', nullable: false })
   amount: number
 
-  @ManyToOne(()=>Customer, (customer)=>customer.sales)
+  @ManyToOne(()=>Customer, (customer)=>customer.sale)
   customer: Customer
 
-  @OneToMany(() => Detail, (detail) => detail.sales)
+  @OneToMany(() => Detail, (detail) => detail.sale)
   details: Detail[]
 
   @CreateDateColumn()

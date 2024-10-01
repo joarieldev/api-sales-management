@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import { Sales } from './Sales'
+import { Sale } from './Sale'
 
 @Entity()
 export class Customer extends BaseEntity {
@@ -23,8 +23,8 @@ export class Customer extends BaseEntity {
   @Column({ type: 'varchar', length: 50, nullable: false })
   lastName: string
 
-  @OneToMany(() => Sales, (sales) => sales.customer)
-  sales: Sales[]
+  @OneToMany(() => Sale, (sale) => sale.customer)
+  sale: Sale[]
 
   @CreateDateColumn()
   createdAt: Date

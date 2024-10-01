@@ -9,7 +9,7 @@ import {
 import { Employee } from './entities/Employee'
 import { Customer } from './entities/Customer'
 import { Product } from './entities/Product'
-import { Sales } from './entities/Sales'
+import { Sale } from './entities/Sale'
 import { Detail } from './entities/Detail'
 
 export const AppDataSource = new DataSource({
@@ -20,5 +20,5 @@ export const AppDataSource = new DataSource({
   password: DB_PASSWORD,
   database: DB_DATABASE,
   synchronize: true,
-  entities: [Employee, Customer, Product, Sales, Detail],
+  entities: [Employee, Customer, Product, Sale, Detail],
 })
