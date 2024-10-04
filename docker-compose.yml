@@ -4,7 +4,7 @@ services:
 
   db:
     image: mysql
-    container_name: api-sales-management
+    container_name: ${CONTAINER_NAME}
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     volumes:
@@ -13,4 +13,4 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
     ports:
-      - '3307:3306'
+      - '${CONTAINER_PORTS}'

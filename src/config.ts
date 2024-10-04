@@ -4,6 +4,7 @@ dotenv.config()
 
 export const HOST = process.env.API_HOST
 export const PORT = process.env.API_PORT
+export const URL = process.env.API_URL
 
 export const DB_HOST = process.env.DB_HOST
 export const DB_PORT = process.env.DB_PORT

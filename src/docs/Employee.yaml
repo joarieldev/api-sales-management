@@ -1,0 +1,195 @@
+paths:
+  /api/employees/:
+    post:
+      summary: Guardar un empleado.
+      tags:
+        - Empleados
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/saveEmployee'
+      responses:
+        "201":
+          description: Empleado creado exitosamente.
+        "500":
+          description: Error interno del servidor.  
+    get:
+      summary: Obtiener todos los empleados.
+      tags:
+        - Empleados
+      responses:
+        "200":
+          description: Los empleados se obtuvieron exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Empleado'
+        "500":
+          description: Error interno del servidor.
+  /api/employees/{id}:
+    put:
+      summary: Actualiza un empleado
+      tags:
+        - Empleados
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Se requier el ID del empleado
+        schema:
+          $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateEmployee'
+      responses:
+        "204":
+          description: El empleado se actualizo exitosamente.
+        "404":
+          description: El empleado no fue encontrado.
+        "500":
+          description: Error interno del servidor.
+    delete:
+      summary: Eliminar un empleado
+      tags:
+        - Empleados
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Se requier el ID del empleado
+        schema:
+          $type: string
+      responses:
+        "204":
+          description: El empleado se elimino exitosamente.
+        "404":
+          description: El empleado no fue encontrado.
+        "500":
+          description: Error interno del servidor.
+  /api/signin:
+    post:
+      summary: Entrar en el sistema
+      tags:
+        - Empleados
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/signIn'
+      responses:
+        "200":
+          description: Sign In exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Id del empleado.
+                  firstName:
+                    type: string
+                    description: Nombre del empleado.
+                  lastName:
+                    type: string
+                    description: Apellido del empleado.
+                  role:
+                    type: string
+                    description: Rol del empleado.
+        "404":
+          description: El empleado no fue encontrado.
+        "500":
+          description: Error interno del servidor.
+components:
+  schemas:
+    Empleado:
+      type: object
+      properties:
+        id: 
+          type: string
+          description: Id autogenerado por la BD.
+        user:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          description: Autoasignado como empleado
+        firstName: 
+          type: string
+        lastName: 
+          type: string
+        createdAt: 
+          type: Date
+        updatedAt: 
+          type: Date
+      example:
+        id: 94ce4-43d7-40b9-8832-f88fda4e54c5
+        user: jhon
+        password: jhon123
+        role: empleado
+        firstName: Jhon
+        lastName: Doe
+        createdAt: '2024-09-13'
+        updatedAt: '2024-09-13'
+  requestBodies:
+    saveEmployee:
+      type: object
+      properties:  
+        user:
+          type: string
+          description: Nombre de usuario.
+        password:
+          type: string
+          description: Contraseña de usuario.  
+        firstName: 
+          type: string
+          description: Nombre del empleado.
+        lastName: 
+          type: string
+          description: Apellido del empleado.
+      example:
+        user: jhon
+        password: jhon123
+        firstName: Jhon
+        lastName: Doe
+    updateEmployee:
+      type: object
+      properties:  
+        user:
+          type: string
+          description: Cambiar el nombre de usuario.
+        password:
+          type: string
+          description: Cambiar la contraseña de usuario.  
+        firstName: 
+          type: string
+          description: Cambiar el nombre del empleado.
+        lastName: 
+          type: string
+          description: Cambiar el apellido del empleado.
+      example:
+        user: jhon1
+        password: jhon123
+        firstName: Jhon
+        lastName: Doe   
+    signIn:
+      type: object
+      properties:  
+        user:
+          type: string
+          description: Nombre de usuario.
+        password:
+          type: string
+          description: Contraseña de usuario.  
+      example:
+        user: jhon
+        password: jhon123

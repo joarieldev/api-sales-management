@@ -1,0 +1,167 @@
+paths:
+  /api/products/:
+    post:
+      summary: Guardar un producto.
+      tags:
+        - Productos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/saveProduct'
+      responses:
+        "201":
+          description: Producto creado exitosamente.
+        "500":
+          description: Error interno del servidor.  
+    get:
+      summary: Obtiener todos los productos.
+      tags:
+        - Productos
+      responses:
+        "200":
+          description: Los productos se obtuvieron exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Producto'
+        "500":
+          description: Error interno del servidor.
+  /api/products/filter/{name}:
+    get:
+      summary: Obtener un producto por su nombre.
+      tags:
+        - Productos
+      parameters:
+      - name: name
+        in: path
+        required: true
+        description: Se requiere el nombre del producto
+        schema:
+          $type: string
+      responses:
+        "200":
+          description: Se obtuvo el producto exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Producto'
+        "404":
+          description: El producto no fue encontrado.
+        "500":
+          description: Error interno del servidor.
+  /api/products/{id}:
+    put:
+      summary: Actualiza un producto
+      tags:
+        - Productos
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Se requiere el ID del producto
+        schema:
+          $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateProduct'
+      responses:
+        "204":
+          description: El producto se actualizo exitosamente.
+        "404":
+          description: El producto no fue encontrado.
+        "500":
+          description: Error interno del servidor.
+    delete:
+      summary: Eliminar un producto
+      tags:
+        - Productos
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Se requiere el ID del producto
+        schema:
+          $type: string
+      responses:
+        "204":
+          description: El producto se elimino exitosamente.
+        "404":
+          description: El producto no fue encontrado.
+        "500":
+          description: Error interno del servidor.
+components:
+  schemas:
+    Producto:
+      type: object
+      properties:
+        id: 
+          type: string
+          description: Id autogenerado por la BD.
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        stock:
+          type: number
+        createdAt: 
+          type: Date
+        updatedAt: 
+          type: Date
+      example:
+        id: 55820480-fe4d-436c-9636-a7e6917cc0de
+        name: Monitor LG 32°
+        description: 100hz color:plateado
+        price: 230000
+        stock: 10
+        createdAt: '2024-09-13'
+        updatedAt: '2024-09-13'
+  requestBodies:
+    saveProduct:
+      type: object
+      properties:  
+        name:
+          type: string
+          description: Nombre del producto.
+        description:
+          type: string
+          description: Descripción del producto.
+        price:
+          type: number
+          description: Precio del producto.
+        stock:
+          type: number
+          description: Stock del producto.
+      example:
+        name: Monitor LG 32°
+        description: 100hz color:plateado
+        price: 230000
+        stock: 10
+    updateProduct:
+      type: object
+      properties:  
+        name:
+          type: string
+          description: Cambiar el nombre del producto.
+        description:
+          type: string
+          description: Cambiar la descripción del producto.
+        price:
+          type: number
+          description: Cambiar el precio del producto.
+        stock:
+          type: number
+          description: Cambiar el stock del producto.
+      example:
+        name: Monitor LG 32°
+        description: 100hz color:plateado fullHD
+        price: 230000
+        stock: 10

@@ -1,0 +1,61 @@
+paths:
+  /api/details/:
+    get:
+      summary: Obtener todos los detalles.
+      tags:
+        - Detalles
+      responses:
+        "200":
+          description: Los detalles se obtuvieron exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Detalle'
+        "500":
+          description: Error interno del servidor.
+  /api/details/{saleId}:
+    get:
+      summary: Obtener todos los detalles de una venta.
+      tags:
+        - Detalles
+      parameters:
+      - name: saleId
+        in: path
+        required: true
+        description: Se requiere el ID de la venta
+        schema:
+          $type: string
+      responses:
+        "200":
+          description: Los detalles se obtuvieron exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Detalle'
+        "404":
+          description: Los detalles de la venta no fue encontrada.
+        "500":
+          description: Error interno del servidor.
+components:
+  schemas:
+    Detalle:
+      type: object
+      properties:
+        id: 
+          type: string
+          description: Id autogenerado por la BD.
+        product:
+          type: object
+        quantity:
+          type: number
+        createdAt: 
+          type: Date
+      example:
+        id: 55820480-fe4d-436c-9636-a7e6917cc0de
+        product: {}
+        quantity: 1
+        createdAt: '2024-09-13'   

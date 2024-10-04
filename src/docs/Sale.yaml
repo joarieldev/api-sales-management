@@ -1,0 +1,73 @@
+paths:
+  /api/sales/:
+    post:
+      summary: Crear una venta.
+      tags:
+        - Ventas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/saveSale'
+      responses:
+        "201":
+          description: Venta creada exitosamente.
+        "500":
+          description: Error interno del servidor.  
+    get:
+      summary: Obtener todas las ventas.
+      tags:
+        - Ventas
+      responses:
+        "200":
+          description: Las ventas se obtuvieron exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Sale'
+        "500":
+          description: Error interno del servidor.
+components:
+  schemas:
+    Sale:
+      type: object
+      properties:
+        id: 
+          type: string
+          description: Id autogenerado por la BD.
+        amount:
+          type: number
+        customer:
+          type: object
+        createdAt: 
+          type: Date
+      example:
+        id: 55820480-fe4d-436c-9636-a7e6917cc0de
+        amount: 10000
+        customer: {}
+        createdAt: '2024-09-13'
+  requestBodies:
+    saveSale:
+      type: object
+      properties:  
+        customerDni:
+          type: number
+          description: Dni del cliente. 
+        details:
+          type: array
+          description: Detalles de la venta.
+          items:
+            type: object
+            properties:
+              productId:
+                type: string
+              quantity:
+                type: number
+      example:
+        customerDni: 12345678
+        details:
+          - productId: 55820480-fe4d-436c-9636-a7e6917cc0de
+            quantity: 1

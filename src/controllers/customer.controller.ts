@@ -53,7 +53,6 @@ export const updateCustomer = async (req: Request, res: Response) => {
       res.status(404).json({ message: 'No se encontró el cliente' })
       return
     }
-    // console.log(customer.id)
     const auxCustomer = new Customer
     auxCustomer.dni = dni
     auxCustomer.firstName = firstName
