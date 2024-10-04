@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestion de ventas</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+          sans-serif;
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+      }
+      main{
+        width: 100%;
+        max-width: 768px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        form {
+          border: solid 1px rgba(128, 128, 128, 0.699);
+          border-radius: 5px;
+          padding: 25px;
+          margin: 10px;
+          max-width: 250px;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+          label {
+            display: flex;
+            flex-direction: column;
+            input {
+              padding: 4px 8px;
+            }
+          }
+          button {
+            padding: 4px 8px;
+            &:hover {
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    </style>
+    <script type="module">
+      let user = {}
+      document.getElementById('loginForm').addEventListener('submit', async function (event) {
+        event.preventDefault()
+
+        const user = document.querySelector('input[name="user"]').value
+        const password = document.querySelector('input[name="password"]').value
+        
+        const res = await fetch('/api/signin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user,
+            password,
+          }),
+        })
+        const data = await res.json()
+        if (res.status !== 200) {
+          alert("Error al acceder: " + data.message)
+          return
+        }
+
+        window.localStorage.setItem('ASM-user', JSON.stringify(data))
+        window.location.href = '/home.html'
+      })
+    </script>
+
+  </head>
+  <body>
+    <main>
+      <form id="loginForm">
+        <label>
+          Usuario:
+          <input type="text" name="user" placeholder="william, john, etc" required/>
+        </label>
+        <label>
+          Contraseña:
+          <input type="password" name="password" placeholder="******" required/>
+        </label>
+        <button type="submit">Acceder</button>
+      </form>
+    </main>
+  </body>
+</html>

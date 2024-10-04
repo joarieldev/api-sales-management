@@ -16,6 +16,8 @@ app.use(morgan('dev'))
 app.use(cors())
 app.use(express.json())
 
+app.use('/', express.static('public'))
+
 app.use('/api', routeCustomer)
 app.use('/api', routeEmployee)
 app.use('/api', routeProduct)

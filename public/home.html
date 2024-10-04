@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestion de ventas - Home</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0 12px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+          Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+          sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        background: rgb(247, 239, 255);
+        background: linear-gradient(
+          0deg,
+          rgba(247, 239, 255, 1) 4%,
+          rgba(255, 249, 239, 1) 100%
+        );
+      }
+
+      .container {
+        width: 100%;
+        max-width: 768px;
+        header {
+          nav {
+            padding: 12px 0;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            div {
+              display: flex;
+              align-items: center;
+              gap: 3rem;
+              #btn-caja {
+                position: relative;
+                #noti {
+                  position: absolute;
+                  background-color: red;
+                  color: white;
+                  width: 14px;
+                  top: -8px;
+                  right: -8px;
+                  border-radius: 100%;
+                  display: none;
+                }
+              }
+              span{
+                display: flex;
+                align-items: center;
+                gap: 12px;
+              }
+              ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+              }
+            }
+          }
+          h1 {
+            text-align: center;
+          }
+        }
+        section {
+          overflow-x: auto;
+        }
+      }
+
+      .btn {
+        padding: 4px 8px;
+        max-height: 29px;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .btn-modal {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        padding: 10px;
+        border-radius: 100%;
+        border: solid 1px black;
+        font-size: 20px;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      td,
+      th {
+        border: 1px solid gray;
+        padding: 0.5rem;
+        text-align: center;
+      }
+
+      dialog {
+        border: solid 1px gray;
+        border-radius: 5px;
+        form {
+          #btn-cancel-modal {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+          }
+          #modal-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            p {
+              margin: 4px 0;
+            }
+            ul {
+              margin: 0;
+            }
+            label {
+              input {
+                padding: 4px 8px;
+              }
+            }
+            ol {
+              margin: 0;
+            }
+          }
+        }
+      }
+    </style>
+    <script type="module">
+
+      let user = JSON.parse(window.localStorage.getItem('ASM-user'))
+
+      if (!user) {
+        window.location.href = '/'
+      }else {
+
+        // crear variables para listar productos y ventas
+        const $ = (el) => document.querySelector(el)
+        const $template_product = $('#list-products-template')
+        const $list_product = $('#list-products')
+        const $template_sale = $('#list-sales-template')
+        const $list_sale = $('#list-sales')
+        const $loading_products = $('#loading-products')
+        const $loading_sales = $('#loading-sales')
+        const $btn_logout = $('#btn-logout')
+        const $noti = $('#noti')
+        
+        const $user = $('#user')
+        const $role = $('#role')
+        $user.textContent =`${user.firstName} ${user.lastName}`
+        $role.textContent =`${user.role}`
+  
+        $btn_logout.addEventListener('click', () => {
+          window.localStorage.removeItem('ASM-user')
+          window.location.href = '/'
+        })
+  
+        const getProducts = async () => {
+          const res = await fetch('/api/products', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          const data = await res.json()
+          $loading_products?.parentNode?.removeChild($loading_products)
+          addProducts(data)
+        }
+  
+        const getSales = async () => {
+          const res = await fetch('/api/sales', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          const data = await res.json()
+          $loading_sales?.parentNode?.removeChild($loading_sales)
+          addSales(data)
+        }
+  
+        getProducts()
+        getSales()
+  
+        // cargar template de productos y ventas
+        const addProducts = (products) => {
+          products.forEach((product, index) => {
+            const clonedTemplate = $template_product.content.cloneNode(true)
+            clonedTemplate.querySelector('#num_p').name = product.id
+            clonedTemplate.querySelector('#num_p').textContent = index++
+            clonedTemplate.querySelector('#name').textContent = product.name
+            clonedTemplate.querySelector('#description').textContent =
+              product.description
+            clonedTemplate.querySelector('#stock').textContent = product.stock
+            clonedTemplate.querySelector('#price').textContent = product.price
+            $list_product.appendChild(clonedTemplate)
+          })
+        }
+        const addSales = (sales) => {
+          let index = 0
+          for (const sale of sales) {
+            const clonedTemplate = $template_sale.content.cloneNode(true)
+            clonedTemplate.querySelector('#num_s').textContent = index++
+            clonedTemplate.querySelector('#total').textContent = sale.amount
+            clonedTemplate.querySelector('#customer').textContent = sale.customer.firstName + ' ' + sale.customer.lastName
+            clonedTemplate.querySelector('#date').textContent = new Date(
+              sale.createdAt
+            ).toLocaleString()
+            clonedTemplate.querySelector('[name="btn-ver-detail"]').id = sale.id
+            $list_sale.appendChild(clonedTemplate)
+          }
+        }
+  
+        // crear variables para modal 
+        const $modal = $('#modal')
+        const $btn_cancel_modal = $('#btn-cancel-modal')
+        const $btn_caja = $('#btn-caja')
+        const $modal_content = $('#modal-content')
+        const $template_caja_modal = $('#caja-modal-template')
+        const $template_detail_modal = $('#detail-modal-template')
+  
+        $btn_cancel_modal.addEventListener('click', () => {
+          $modal.close()
+        })
+  
+        // caja modal
+        $btn_caja.addEventListener('click', () => {
+          $modal_content.innerHTML = ''
+          const clonedTemplate = $template_caja_modal.content.cloneNode(true)
+          let element = ''
+          carrito.forEach((item) => {
+            element += `
+              <li>
+                <p>${item.name} x${item.quantity} <button type="button" id="${item.productId}" title="quitar" name="btn-quitar">❌</button></p>
+              </li>
+            `
+          })
+          let element2 = `
+              <p>No hay productos en la caja</p>
+          `
+          clonedTemplate.querySelector('#list-products-caja').innerHTML = carrito.length ? element : element2
+          $modal_content.appendChild(clonedTemplate)
+          $modal.showModal()
+        })
+        
+        let carrito = []
+        $list_product.addEventListener('click', (event) => {
+          if (event.target.name === 'btn-carrito') {
+            const name = event.target.parentElement.parentElement.querySelector('#name').textContent
+            const productId = event.target.parentElement.parentElement.querySelector('#num_p').name
+            const find = carrito.find(item => item.productId === productId)
+            if (find) {
+              carrito.forEach(item => {
+                if (item.productId === productId) {
+                  item.quantity++
+                }
+              })
+            }else{
+              carrito.push({name,productId, quantity: 1})
+            }
+            $noti.style.display = 'block'
+            $noti.textContent = carrito.length
+          }
+        })
+
+        $modal.querySelector('#modal-content').addEventListener('click', (event) => {
+          if (event.target.name === 'btn-quitar') {
+            const filter = carrito.filter(item => item.productId !== event.target.id)
+            carrito = filter
+            $noti.textContent = carrito.length
+            if (carrito.length === 0) {
+              $noti.style.display = 'none'
+              event.target.parentElement.parentElement.parentElement.innerHTML = `
+                  <p>No hay productos en la caja</p>
+              `
+            }else {
+              event.target.parentElement.parentElement.remove()
+            }
+          }
+        })
+
+        $modal.querySelector('#modal-form').addEventListener('submit', async (event) => {
+          event.preventDefault()
+          console.log('vender')
+          const dni = event.target.parentElement.parentElement.querySelector('[name="dni"]').value
+          addSale(dni)
+        })
+
+        const addSale = async (dni) => {
+          const details = carrito.map(({ productId, quantity }) => ({ productId, quantity }))
+          const res = await fetch(`/api/sales`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              customerDni: dni,
+              details
+            })
+          })
+          const data = await res.json()
+          if (res.status !== 201) {
+            alert('Error: ' + data.message)
+            return
+          }
+          window.location.reload()
+        }
+
+        // ver detalle modal
+        $list_sale.addEventListener('click', (event) => {
+          if (event.target.name === 'btn-ver-detail') {
+            const client = event.target.parentElement.parentElement.querySelector('#customer').textContent
+            const total = event.target.parentElement.parentElement.querySelector('#total').textContent
+            verDetail(event.target.id, client, total)
+          }
+        })
+  
+        const verDetail = async (id, client, total) => {
+          const res = await fetch(`/api/details/${id}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          const data = await res.json()
+          if (res.status !== 200) {
+            alert('Error: ' + data.message)
+            return
+          }
+  
+          $modal_content.innerHTML = ''
+          const clonedTemplate = $template_detail_modal.content.cloneNode(true)
+          clonedTemplate.querySelector('#sale-id').textContent = id
+          clonedTemplate.querySelector('#customer-name').textContent = client
+          let element = ''
+          data.forEach((detail) => {
+            element += `
+              <li>
+                <p>${detail.product.name}</p>
+                <p>$${detail.product.price} x${detail.quantity}</p>
+              </li>
+            `
+          })
+          clonedTemplate.querySelector('#detail-products').innerHTML = element
+          clonedTemplate.querySelector('#sale-amount').textContent = total
+          $modal_content.appendChild(clonedTemplate)
+  
+          $modal.showModal()
+        }
+
+      }
+    </script>
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <nav>
+          <span>🏬</span>
+          <div>
+              <button id="btn-caja" class="btn" title="caja">💰 <span id="noti">0</span></button>
+              <span>
+                <ul>
+                  <li id="user">user</li>
+                  <li ><small id="role">role</small></li>
+                </ul>
+                <button id="btn-logout" class="btn" title="salir">Salir 🚪</button>
+              </span>
+          </div>
+        </nav>
+        <h1>Gestion de ventas</h1>
+      </header>
+      <section>
+        <h1>Listado de productos</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Stock</th>
+              <th>Precio</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="list-products">
+            <tr id="loading-products">
+              <td colspan="6">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h1>Ventas realizadas</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Total</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="list-sales">
+            <tr id="loading-sales">
+              <td colspan="5">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <dialog id="modal">
+      <form id="modal-form">
+        <button id="btn-cancel-modal" type="reset" class="btn">×</button>
+        <div id="modal-content"></div>
+      </form>
+    </dialog>
+
+    <template id="list-products-template">
+      <tr>
+        <td id="num_p"></td>
+        <td id="name"></td>
+        <td id="description"></td>
+        <td id="stock"></td>
+        <td id="price"></td>
+        <td>
+          <button name="btn-carrito" class="btn" title="agregar a carrito">🛒</button>
+        </td>
+      </tr>
+    </template>
+
+    <template id="list-sales-template">
+      <tr>
+        <td id="num_s"></td>
+        <td id="total"></td>
+        <td id="customer"></td>
+        <td id="date"></td>
+        <td>
+          <button
+            name="btn-ver-detail"
+            class="btn openModal"
+            title="ver detalle"
+          >
+            📋
+          </button>
+        </td>
+      </tr>
+    </template>
+
+    <template id="caja-modal-template">
+      <p><strong>Caja </strong></p>
+      <ul id="list-products-caja"></ul>
+      <label>
+        DNI del cliente:
+        <input type="number" name="dni" placeholder="Ej: 43298798" required />
+      </label>
+      <div>
+        <button type="submit" class="btn">Vender</button>
+      </div>
+    </template>
+
+    <template id="detail-modal-template">
+      <div>
+        <p><strong>Legajo: </strong></p>
+        <p id="sale-id">sdf</p>
+      </div>
+      <div>
+        <p><strong>Cliente: </strong></p>
+        <p id="customer-name"></p>
+      </div>
+      <div>
+        <p><strong>Compró:</strong></p>
+        <ol id="detail-products"></ol>
+      </div>
+      <div>
+        <p>
+          <strong>Total: </strong>
+          <span id="sale-amount"></span>
+        </p>
+      </div>
+    </template>
+  </body>
+</html>

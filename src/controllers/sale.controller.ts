@@ -14,6 +14,10 @@ export const createSale = async (req: Request, res: Response) => {
       res.status(404).json({ message: 'No se encontró el cliente' })
       return
     }
+    if (details.length === 0) {
+      res.status(400).json({ message: 'No hay productos en la caja' })
+      return
+    }
 
     const arrayDetails: Detail[] = []
 
